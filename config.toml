@@ -1,0 +1,8 @@
+[api]
+port = "8080"
+
+[database]
+host = "localhost"
+user = "user_govita_development"
+password = "pwd_govita_development"
+name = "govita_development"
