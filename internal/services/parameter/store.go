@@ -43,6 +43,28 @@ func (s *Store) CreateParameter(parameter types.Parameter) error {
 	return nil
 }
 
+func (s *Store) UpdateParameter(parameter types.Parameter) error {
+  queries := db.New(s.db)
+  ctx := context.Background()
+
+  now := time.Now()
+  parameter.UpdatedAt = now
+
+  updateParameterParams := db.UpdateParameterParams{
+    ID:                parameter.ID,
+    DeleteAtDays:      parameter.DeleteAtDays,
+    PercentagePricing: parameter.PercentagePricing,
+    UpdatedAt:         parameter.UpdatedAt,
+  }
+
+  if err := queries.UpdateParameter(ctx, updateParameterParams); err != nil {
+    fmt.Println("Erro ao atualizar um parâmetros:", err)
+    return err
+  }
+  return nil
+}
+
+
 func (s *Store) GetParameterByID(id uuid.UUID) (*types.Parameter, error) {
 	queries := db.New(s.db)
 	ctx := context.Background()
