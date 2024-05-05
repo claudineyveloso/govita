@@ -10,3 +10,6 @@ WHERE searches.id = $1;
 -- name: GetSearches :many
 SELECT *
 FROM searches;
+
+-- name: DeleteSearch :exec
+DELETE FROM searches WHERE searches.id = $1;

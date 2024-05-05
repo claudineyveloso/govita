@@ -20,4 +20,7 @@ type Result struct {
 
 type ResultStore interface {
 	CreateResult(Result) error
+  GetResults() ([]*Result, error)
+	GetResultByID(id uuid.UUID) (*Result, error)
+  DeleteResult(id uuid.UUID) error
 }
