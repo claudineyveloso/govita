@@ -31,6 +31,14 @@ type UserPayload struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+type UpdateUserPayload struct {
+	ID        uuid.UUID `json:"id"`
+	Email     string    `json:"email" validate:"required"`
+	IsActive  bool      `json:"is_active"`
+	UserType  string    `json:"user_type" validate:"required"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
 type PasswordUserPayload struct {
 	Password  string    `json:"password" validate:"required"`
 	UpdatedAt time.Time `json:"updated_at"`
@@ -57,6 +65,7 @@ type LoginResponse struct {
 
 type UserStore interface {
 	CreateUser(UserPayload) error
+	UpdateUser(UpdateUserPayload) error
 	GetUsers() ([]*User, error)
 	GetUserByID(id uuid.UUID) (*User, error)
 	GetUserByEmail(email string) (*User, error)

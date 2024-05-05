@@ -1,6 +1,7 @@
 package user
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -27,6 +28,7 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	// router.HandleFunc("/register", h.handleRegister).Methods("POST")
 
 	router.HandleFunc("/create_user", h.handleCreateUser).Methods(http.MethodPost)
+	router.HandleFunc("/update_user", h.handleUpdateUser).Methods(http.MethodPut)
 	router.HandleFunc("/get_users", h.handleGetUsers).Methods(http.MethodGet)
 	router.HandleFunc("/get_user/{userID}", h.handleGetUser).Methods(http.MethodGet)
 }
@@ -116,7 +118,7 @@ func (h *Handler) handleCreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := utils.Validate.Struct(user); err != nil {
 		errors := err.(validator.ValidationErrors)
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Payload inválido: %v", errors))
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("payload inválido: %v", errors))
 		return
 	}
 	err := h.userStore.CreateUser(user)
@@ -126,6 +128,37 @@ func (h *Handler) handleCreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteJSON(w, http.StatusCreated, user)
+}
+
+func (h *Handler) handleUpdateUser(w http.ResponseWriter, r *http.Request) {
+	var user types.UpdateUserPayload
+	if err := utils.ParseJSON(r, &user); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+	if err := utils.Validate.Struct(user); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("payload inválido: %v", errors))
+		return
+	}
+	err := h.userStore.UpdateUser(user)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+	response := map[string]interface{}{
+		"data":    user,
+		"message": "Registro alterado com sucesso",
+		"status":  http.StatusOK,
+	}
+	jsonResponse, err := json.Marshal(response)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(jsonResponse)
 }
 
 func (h *Handler) handleGetUsers(w http.ResponseWriter, r *http.Request) {
@@ -141,12 +174,12 @@ func (h *Handler) handleGetUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	str, ok := vars["userID"]
 	if !ok {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("ID do Usuário ausente!"))
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("ID do Usuário ausente"))
 		return
 	}
 	parsedUserID, err := uuid.Parse(str)
 	if err != nil {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("ID do Usuário inválido!"))
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("ID do Usuário inválido"))
 		return
 	}
 

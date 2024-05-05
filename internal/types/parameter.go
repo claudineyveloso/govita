@@ -16,6 +16,7 @@ type Parameter struct {
 
 type ParameterStore interface {
 	CreateParameter(Parameter) error
+	UpdateParameter(Parameter) error
 	GetParameters() ([]*Parameter, error)
 	GetParameterByID(id uuid.UUID) (*Parameter, error)
 }

@@ -88,3 +88,24 @@ func (q *Queries) GetParameters(ctx context.Context) ([]Parameter, error) {
 	}
 	return items, nil
 }
+
+const updateParameter = `-- name: UpdateParameter :exec
+UPDATE parameters SET delete_at_days = $2, percentage_pricing = $3, updated_at = $4 WHERE parameters.id = $1
+`
+
+type UpdateParameterParams struct {
+	ID                uuid.UUID `json:"id"`
+	DeleteAtDays      int32     `json:"delete_at_days"`
+	PercentagePricing int32     `json:"percentage_pricing"`
+	UpdatedAt         time.Time `json:"updated_at"`
+}
+
+func (q *Queries) UpdateParameter(ctx context.Context, arg UpdateParameterParams) error {
+	_, err := q.db.ExecContext(ctx, updateParameter,
+		arg.ID,
+		arg.DeleteAtDays,
+		arg.PercentagePricing,
+		arg.UpdatedAt,
+	)
+	return err
+}

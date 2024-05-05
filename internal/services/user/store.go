@@ -52,6 +52,28 @@ func (s *Store) CreateUser(user types.UserPayload) error {
 	return nil
 }
 
+func (s *Store) UpdateUser(user types.UpdateUserPayload) error {
+	queries := db.New(s.db)
+	ctx := context.Background()
+
+	now := time.Now()
+	user.UpdatedAt = now
+
+	updateUserParams := db.UpdateUserParams{
+		ID:        user.ID,
+		Email:     user.Email,
+		IsActive:  user.IsActive,
+		UserType:  user.UserType,
+		UpdatedAt: user.UpdatedAt,
+	}
+
+	if err := queries.UpdateUser(ctx, updateUserParams); err != nil {
+		fmt.Println("Erro ao atualizar um parâmetros:", err)
+		return err
+	}
+	return nil
+}
+
 func (s *Store) GetUsers() ([]*types.User, error) {
 	queries := db.New(s.db)
 	ctx := context.Background()
