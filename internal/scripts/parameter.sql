@@ -10,3 +10,8 @@ WHERE parameters.id = $1;
 -- name: GetParameters :many
 SELECT *
 FROM parameters;
+
+-- name: UpdateParameter :exec
+UPDATE parameters SET delete_at_days = $2, percentage_pricing = $3, updated_at = $4 WHERE parameters.id = $1;
+
+
