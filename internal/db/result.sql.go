@@ -44,6 +44,15 @@ func (q *Queries) CreateResult(ctx context.Context, arg CreateResultParams) erro
 	return err
 }
 
+const deleteResult = `-- name: DeleteResult :exec
+DELETE FROM results WHERE results.search_id = $1
+`
+
+func (q *Queries) DeleteResult(ctx context.Context, searchID uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteResult, searchID)
+	return err
+}
+
 const getResult = `-- name: GetResult :one
 SELECT id, image_url, description, font, price, promotion, search_id, created_at, updated_at
 FROM results

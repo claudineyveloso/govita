@@ -34,6 +34,15 @@ func (q *Queries) CreateSearch(ctx context.Context, arg CreateSearchParams) erro
 	return err
 }
 
+const deleteSearch = `-- name: DeleteSearch :exec
+DELETE FROM searches WHERE searches.id = $1
+`
+
+func (q *Queries) DeleteSearch(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteSearch, id)
+	return err
+}
+
 const getSearch = `-- name: GetSearch :one
 SELECT id, description, created_at, updated_at
 FROM searches
