@@ -7,6 +7,7 @@ import (
 
 	"github.com/claudineyveloso/govita.git/internal/services/healthy"
 	"github.com/claudineyveloso/govita.git/internal/services/parameter"
+	"github.com/claudineyveloso/govita.git/internal/services/result"
 	"github.com/claudineyveloso/govita.git/internal/services/search"
 	"github.com/claudineyveloso/govita.git/internal/services/user"
 	"github.com/gorilla/handlers"
@@ -40,6 +41,10 @@ func (s *APIServer) Run() error {
 	searchStore := search.NewStore(s.db)
 	searchHandler := search.NewHandler(searchStore)
 	searchHandler.RegisterRoutes(r)
+
+	resultStore := result.NewStore(s.db)
+	resultHandler := result.NewHandler(resultStore)
+	resultHandler.RegisterRoutes(r)
 
 	fmt.Println("Server started on http://localhost:8080")
 

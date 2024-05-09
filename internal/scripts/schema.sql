@@ -25,8 +25,8 @@ create unique index description_idx on searches (description);
 DROP TABLE IF EXISTS "results";
 CREATE TABLE IF NOT EXISTS results (
   id            UUID PRIMARY KEY,
-  image_url     varchar(100) not null,
-  description   varchar(100) not null,
+  image_url     varchar(255) not null,
+  description   varchar(255) not null,
   font          varchar(100) not null,
   price         float not null,
   promotion     boolean not null default false,
